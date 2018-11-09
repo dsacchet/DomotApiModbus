@@ -4,9 +4,9 @@ import os
 import sys
 
 try:
-    from setuptools import setup
+    from setuptools import setup, find_packages
 except ImportError:
-    from distutils.core import setup
+    from distutils.core import setup, find_packages
 
 settings = dict()
 
@@ -35,7 +35,7 @@ with open('requirements.txt') as file_requirements:
 
 settings.update(
     name='DomotApiModbus',
-    version='0.1',
+    version='0.2',
     description='Working with modbus devices in domot-api',
     long_description=readme + '\n\n' + history,
     author='Denis Sacchet',
@@ -45,6 +45,9 @@ settings.update(
     keywords="modbus vmc boiler dedietrich unelvent ideo",
     py_modules= ['DomotApiModbus','VmcUnelvent'],
     install_requires=requirements,
+    package_data={
+        '': ['*.rst','*.txt'],
+    }
 )
 
 
