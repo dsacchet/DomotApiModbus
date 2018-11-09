@@ -35,20 +35,18 @@ with open('requirements.txt') as file_requirements:
 
 settings.update(
     name='DomotApiModbus',
-    version='0.2',
+    version='0.3.1',
+    author='Denis Sacchet',
+    author_email='denis@sacchet.fr',
     description='Working with modbus devices in domot-api',
     long_description=readme + '\n\n' + history,
-    author='Denis Sacchet',
     license='MIT',
     url='https://github.com/dsacchet/DomotApiModbus',
     classifiers=CLASSIFIERS,
     keywords="modbus vmc boiler dedietrich unelvent ideo",
-    py_modules= ['DomotApiModbus','VmcUnelvent'],
+    packages=find_packages(),
     install_requires=requirements,
-    package_data={
-        '': ['*.rst','*.txt'],
-    }
+    include_package_data=True
 )
-
 
 setup(**settings)
