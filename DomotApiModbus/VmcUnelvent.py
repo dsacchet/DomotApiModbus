@@ -22,7 +22,7 @@ import DomotApiModbus
 
 class VmcUnelvent(DomotApiModbus.Modbus):
 
-    def __init__(self, Port, SlaveAddress = 1, Mode = 'rtu', Serial = {'baudrate':19200,'bytesize':8,'parity':'E','stopbits':1 }):
+    def __init__(self, Port, SlaveAddress = 1, Mode = 'rtu', Serial = {'baudrate':19200,'bytesize':8,'parity':'E','stopbits':1 }, Timeout = 0.05):
         self._ITEMS={
     'mode': { 'type':'holding_register','params':{'RegisterAddress':15},'mapping':{ 0:'normal',1:'boost',2:'bypass'},'actions':('get','put')},
     'tint': { 'type':'input_register','params':{'RegisterAddress':21,'NumberOfDecimals':1,'Signed':True},'mapping':{ '0':'normal','1':'boost','2':'bypass'},'actions':('get')},
@@ -36,4 +36,4 @@ class VmcUnelvent(DomotApiModbus.Modbus):
     'vit_mot_ins': { 'type':'input_register','params':{'RegisterAddress':20},'actions':('get')},
     'etat_filtre': { 'type':'discrete_input','params':{'RegisterAddress':13},'mapping': {0 : 'ok', 1 : 'nok' }, 'actions':('get')},
                 }
-        super(VmcUnelvent,self).__init__(Port = Port,SlaveAddress = SlaveAddress,Mode = Mode,Serial = Serial)
+        super(VmcUnelvent,self).__init__(Port = Port,SlaveAddress = SlaveAddress,Mode = Mode,Serial = Serial, Timeout = Timeout)

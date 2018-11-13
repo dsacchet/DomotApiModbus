@@ -35,7 +35,7 @@ with open('requirements.txt') as file_requirements:
 
 settings.update(
     name='DomotApiModbus',
-    version='0.3.1',
+    version='0.4.0',
     author='Denis Sacchet',
     author_email='denis@sacchet.fr',
     description='Working with modbus devices in domot-api',
