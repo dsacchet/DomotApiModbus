@@ -23,6 +23,7 @@ import functools
 import os
 import hashlib
 import errno
+import pprint
 
 from retrying import retry
 import dogpile.cache
@@ -47,6 +48,8 @@ def minimalmodbus_cache_key_generator(namespace,fn):
 
 region = dogpile.cache.make_region(function_key_generator = minimalmodbus_cache_key_generator)
 
+pp = pprint.PrettyPrinter(indent=4)
+
 class Utils(object):
     def md5(self,string):
         m = hashlib.md5()
@@ -62,6 +65,7 @@ class DeviceLockException(Exception):
 class Modbus(object):
 
     def __init__(self,Port,SlaveAddress,Serial,Mode = 'rtu',Timeout=0.05,Debug=False):
+        pp.pprint(Serial)
         self.Port = Port
         self.SlaveAddress = SlaveAddress
         self.Mode = Mode
@@ -125,14 +129,16 @@ class Modbus(object):
         if Item in self._ITEMS:
             ItemConfig = self._ITEMS[Item]
             if 'get' not in ItemConfig['actions']:
-                raise NotImplemntedError
+                raise NotImplementedError
             if (ItemConfig['type'],'get') not in self._func_mapping:
-                raise NotImplemntedError
+                raise NotImplementedError
             else:
                 func = self._func_mapping[(ItemConfig['type'],'get')]
                 params = ItemConfig['params']
                 params['FunctionCode'] = func['FunctionCode']
                 result=func['func'](**params)
+                if 'decode' in ItemConfig:
+                    result = ItemConfig['decode'](result)
                 if UseMapping:
                     try:
                         return ItemConfig['mapping'][result]
@@ -145,9 +151,9 @@ class Modbus(object):
         if Item in self._ITEMS:
             ItemConfig = self._ITEMS[Item]
             if 'put' not in ItemConfig['actions']:
-                raise NotImplemntedError
+                raise NotImplementedError
             if (ItemConfig['type'],'put') not in self._func_mapping:
-                raise NotImplemntedError
+                raise NotImplementedError
             else:
                 func = self._func_mapping[(ItemConfig['type'],'put')]
                 params = ItemConfig['params']
@@ -156,6 +162,7 @@ class Modbus(object):
                 result = func['func'](**params)
                 self.GetValue.invalidate(Item=Item,UseMapping=True)
                 self.GetValue.invalidate(Item=Item,UseMapping=False)
+                return result
 
     # Wrapper to allow define dynamically in subclass retry paramaters
     def RetryModbus(func=None):
@@ -210,6 +217,11 @@ class Modbus(object):
                 self.Instrument.debug           = self.GetDebug()
             return func(self,*args,**kargs)
         return wrap
+
+    @InitInstrument
+    def SetDebug(self,Debug):
+        self.Debug = Debug
+        self.Instrument.debug = Debug
 
     def GetDebug(self):
         return self.Debug
